@@ -5,8 +5,25 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.hicolors.leisure</groupId>
-    <artifactId>leisure-backend.gateway</artifactId>
+    <artifactId>leisure-backend-gateway</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
+    <parent>
+        <groupId>com.github.hicolors</groupId>
+        <artifactId>leisure</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <modules>
+        <module>leisure-backend-gateway-sdk</module>
+        <module>leisure-backend-gateway-application</module>
+    </modules>
+
+    <properties>
+
+        <leisure-backend-gateway.version>1.0-SNAPSHOT</leisure-backend-gateway.version>
+
+    </properties>
 
 </project>
