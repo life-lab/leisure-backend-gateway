@@ -8,11 +8,7 @@ server:
 warning:
   dingtalk: https://oapi.dingtalk.com/robot/send?access_token=099551a192492077a922a5d1aa7e1a060b0fd18890f021c0e4298013d4dcb5c2
 
-spring:
-  cloud:
-    gateway:
-      routes:
-      - id: leisure-member
-        uri: http://47.105.97.16:8080
-        predicates:
-        - Path=/leisure-member/**
+
+
+url:
+  leisure-member: http://47.105.97.16:8080/leisure-member

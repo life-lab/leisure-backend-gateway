@@ -18,12 +18,20 @@
     <modules>
         <module>leisure-backend-gateway-sdk</module>
         <module>leisure-backend-gateway-application</module>
+        <module>leisure-backend-gateway-model</module>
     </modules>
 
     <properties>
 
         <leisure-backend-gateway.version>1.0-SNAPSHOT</leisure-backend-gateway.version>
-
+        <leisure-member.version>1.0-SNAPSHOT</leisure-member.version>
     </properties>
+
+    <dependencyManagement>
+
+        <dependencies>
+
+        </dependencies>
+    </dependencyManagement>
 
 </project>

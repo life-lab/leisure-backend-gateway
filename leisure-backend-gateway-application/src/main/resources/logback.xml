@@ -128,13 +128,26 @@
         <appender-ref ref="asyncAccess"/>
     </logger>
 
+    <logger name="springfox.documentation" level="OFF"/>
 
-    <root>
-        <level value="INFO"/>
-        <appender-ref ref="stdout"/>
-        <appender-ref ref="asyncInfo"/>
-        <appender-ref ref="asyncWarn"/>
-        <appender-ref ref="asyncError"/>
-    </root>
+
+    <springProfile name="dev">
+        <root>
+            <level value="INFO"/>
+            <appender-ref ref="stdout"/>
+            <appender-ref ref="asyncInfo"/>
+            <appender-ref ref="asyncWarn"/>
+            <appender-ref ref="asyncError"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="test,prod">
+        <root>
+            <level value="INFO"/>
+            <appender-ref ref="asyncInfo"/>
+            <appender-ref ref="asyncWarn"/>
+            <appender-ref ref="asyncError"/>
+        </root>
+    </springProfile>
 
 </configuration>
