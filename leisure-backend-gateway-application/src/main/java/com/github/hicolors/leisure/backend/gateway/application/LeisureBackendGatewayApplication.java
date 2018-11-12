@@ -2,6 +2,8 @@ package com.github.hicolors.leisure.backend.gateway.application;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 
 /**
  * LeisureBackendGatewayApplication
@@ -10,6 +12,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @date 2018/10/30
  */
 @SpringBootApplication
+@EnableFeignClients({
+        "com.github.hicolors.leisure.backend.gateway.application.client"
+})
+@EnableZuulProxy
 public class LeisureBackendGatewayApplication {
 
     public static void main(String[] args) {

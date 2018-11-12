@@ -19,12 +19,12 @@ public class AuthTokenModel {
     private String accessToken;
 
     @ApiModelProperty("token 失效期")
-    private Long tokenExpiresIn;
+    private Long tokenExpires;
 
     @ApiModelProperty("刷新 token ")
     private String refreshToken;
 
     @ApiModelProperty("刷新 token 失效期")
-    private Long refreshTokenExpiresIn;
+    private Long refreshTokenExpires;
 
 }

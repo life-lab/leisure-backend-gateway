@@ -29,7 +29,7 @@ public class SignRest {
 
     @ApiOperation("登入 - 密码")
     @PostMapping("/sign-in/password")
-    public AuthTokenModel signInPassowrd(@RequestBody @Validated SignInPassword model) {
+    public AuthTokenModel signInPassword(@RequestBody @Validated SignInPassword model) {
         return signService.password(model);
     }
 
