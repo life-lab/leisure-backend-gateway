@@ -2,7 +2,7 @@ package com.github.hicolors.leisure.backend.gateway.application.token;
 
 import com.github.hicolors.leisure.backend.gateway.model.auth.AuthTokenModel;
 import com.github.hicolors.leisure.common.utils.JsonUtils;
-import com.github.hicolors.leisure.member.model.persistence.Member;
+import com.github.hicolors.leisure.member.model.authorization.MemberAuthorization;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -60,12 +60,15 @@ public class RedisTokenStore {
     private Long newRefreshTokenIntervalSeconds;
 
     /**
-     * 生成的密钥
+     * 生成时使用的加密密钥
      */
     @Value("${auth.secret:leisure-backend-gateway-application}")
     private String secret;
 
-    private Integer MAX_SIGN_IN_DEVICE = 10;
+    /**
+     * 最大登录设备
+     */
+    private static final Integer MAX_SIGN_IN_DEVICE = 10;
 
     /**
      * 生成一个新的 refresh token
@@ -73,22 +76,23 @@ public class RedisTokenStore {
      * @param member
      * @return
      */
-    private String storeRefreshToken(Member member) {
+    protected String storeRefreshToken(MemberAuthorization member) {
         //根据 userid 和 来源，获取 refresh token
         String refreshToken = stringRedisTemplate.opsForValue().get(generateUserRefreshTokenKey(member.getId()));
         //如果为空 生成一个
         if (StringUtils.isNotBlank((refreshToken))) {
             if (ObjectUtils.defaultIfNull(stringRedisTemplate.getExpire(generateRefreshTokenKey(refreshToken), TimeUnit.SECONDS), 0L) > newRefreshTokenIntervalSeconds) {
                 return refreshToken;
+            }else{
+                //清除过期的 refresh token
+                stringRedisTemplate.delete(generateRefreshTokenKey(refreshToken));
             }
-            stringRedisTemplate.delete(generateRefreshTokenKey(refreshToken));
         }
+        //清除历史数据
         stringRedisTemplate.delete(generateUserRefreshTokenKey(member.getId()));
 
         //创建用户基础信息缓存
-        String userInfoJson = JsonUtils.serialize(member);
-        String userInfoKey = generateUserInfoKey(member.getId());
-        stringRedisTemplate.opsForValue().set(userInfoKey, userInfoJson, refreshTokenValidateSeconds, TimeUnit.SECONDS);
+        storeUserInfo(member);
 
         //创建用户 refresh token 关联信息
         String userRefreshTokenKey = generateUserRefreshTokenKey(member.getId());
@@ -100,7 +104,7 @@ public class RedisTokenStore {
         return refreshToken;
     }
 
-    public AuthTokenModel storeAccessToken(Member member) {
+    public AuthTokenModel storeAccessToken(MemberAuthorization member) {
         //创建用户 token
         AuthTokenModel authTokenModel = new AuthTokenModel();
         String accessToken = randomStringByUserId(member.getId());
@@ -135,12 +139,12 @@ public class RedisTokenStore {
         stringRedisTemplate.delete(generateUserInfoKey(id));
     }
 
-    public Long findByAccessToken(String accessToken){
-        return Long.valueOf(ObjectUtils.defaultIfNull(stringRedisTemplate.opsForValue().get(generateAccessTokenKey(accessToken)),"0"));
+    public Long findByAccessToken(String accessToken) {
+        return Long.valueOf(ObjectUtils.defaultIfNull(stringRedisTemplate.opsForValue().get(generateAccessTokenKey(accessToken)), "0"));
     }
 
-    public Long findByRefreshToken(String accessToken){
-        return Long.valueOf(ObjectUtils.defaultIfNull(stringRedisTemplate.opsForValue().get(generateRefreshTokenKey(accessToken)),"0"));
+    public Long findByRefreshToken(String accessToken) {
+        return Long.valueOf(ObjectUtils.defaultIfNull(stringRedisTemplate.opsForValue().get(generateRefreshTokenKey(accessToken)), "0"));
     }
 
     protected String randomStringByUserId(Long userId) {
@@ -154,6 +158,14 @@ public class RedisTokenStore {
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException("MD5 algorithm not available.  Fatal (should be in the JDK).", e);
         }
+    }
+
+    protected void storeUserInfo(MemberAuthorization member) {
+        //创建用户基础信息缓存
+        String userInfoJson = JsonUtils.serialize(member);
+        String userInfoKey = generateUserInfoKey(member.getId());
+        stringRedisTemplate.opsForValue().set(userInfoKey, userInfoJson, refreshTokenValidateSeconds, TimeUnit.SECONDS);
+
     }
 
     protected String generateUserInfoKey(Long id) {

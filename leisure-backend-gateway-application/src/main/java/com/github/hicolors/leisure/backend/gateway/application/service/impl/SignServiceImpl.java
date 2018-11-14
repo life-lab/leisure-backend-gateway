@@ -44,7 +44,7 @@ public class SignServiceImpl implements SignService {
         } catch (ExtensionException e) {
             throw new BackendGatewayServerException(EnumCodeMessage.CREDENTIAL_ERROR);
         }
-        return tokenStore.storeAccessToken(member);
+        return tokenStore.storeAccessToken(userClient.queryMemberAuthorization(member.getId()));
     }
 
     @Override
@@ -58,7 +58,7 @@ public class SignServiceImpl implements SignService {
         } catch (ExtensionException e) {
             throw new BackendGatewayServerException(EnumCodeMessage.MEMBER_NON_EXSIT);
         }
-        return tokenStore.storeAccessToken(member);
+        return tokenStore.storeAccessToken(userClient.queryMemberAuthorization(member.getId()));
     }
 
     @Override
@@ -72,7 +72,7 @@ public class SignServiceImpl implements SignService {
         } catch (ExtensionException e) {
             throw new BackendGatewayServerException(EnumCodeMessage.MEMBER_NON_EXSIT);
         }
-        return tokenStore.storeAccessToken(member);
+        return tokenStore.storeAccessToken(userClient.queryMemberAuthorization(member.getId()));
     }
 
     @Override
@@ -87,7 +87,7 @@ public class SignServiceImpl implements SignService {
         } catch (ExtensionException e) {
             throw new BackendGatewayServerException(EnumCodeMessage.MEMBER_NON_EXSIT);
         }
-        return tokenStore.storeAccessToken(member);
+        return tokenStore.storeAccessToken(userClient.queryMemberAuthorization(member.getId()));
     }
 
     @Override

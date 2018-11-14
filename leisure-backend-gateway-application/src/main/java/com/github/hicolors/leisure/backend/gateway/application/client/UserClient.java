@@ -1,5 +1,6 @@
 package com.github.hicolors.leisure.backend.gateway.application.client;
 
+import com.github.hicolors.leisure.member.model.authorization.MemberAuthorization;
 import com.github.hicolors.leisure.member.model.persistence.Member;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,4 +38,7 @@ public interface UserClient {
     @GetMapping("/unique-key/password")
     Member queryOneByUniqueKeyAndPassword(@RequestParam("uniquekey") String uniquekey, @RequestParam("password") String password);
 
+    @ApiOperation("人员 - 获取人员所有的授权信息")
+    @GetMapping("/{id}/authorization")
+    MemberAuthorization queryMemberAuthorization(@PathVariable("id") Long id);
 }
