@@ -44,7 +44,7 @@
 
         <dependency>
             <groupId>com.github.hicolors</groupId>
-            <artifactId>common-fegin</artifactId>
+            <artifactId>common-feign</artifactId>
         </dependency>
 
         <dependency>
