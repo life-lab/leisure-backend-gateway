@@ -1,16 +1,17 @@
 package com.github.hicolors.leisure.backend.gateway.application.service.impl;
 
-import com.github.hicolors.leisure.backend.gateway.application.client.UserClient;
 import com.github.hicolors.leisure.backend.gateway.application.exception.BackendGatewayServerException;
 import com.github.hicolors.leisure.backend.gateway.application.exception.EnumCodeMessage;
 import com.github.hicolors.leisure.backend.gateway.application.service.SignService;
-import com.github.hicolors.leisure.backend.gateway.application.token.RedisTokenStore;
-import com.github.hicolors.leisure.backend.gateway.model.auth.AuthTokenModel;
 import com.github.hicolors.leisure.backend.gateway.model.sign.SignInEmail;
 import com.github.hicolors.leisure.backend.gateway.model.sign.SignInMobile;
 import com.github.hicolors.leisure.backend.gateway.model.sign.SignInPassword;
 import com.github.hicolors.leisure.backend.gateway.model.sign.SignInRefreshToken;
 import com.github.hicolors.leisure.common.exception.ExtensionException;
+import com.github.hicolors.leisure.member.authorization.feign.SignInClient;
+import com.github.hicolors.leisure.member.authorization.token.TokenStore;
+import com.github.hicolors.leisure.member.authorization.token.impl.AuthToken;
+import com.github.hicolors.leisure.member.authorization.token.impl.RedisTokenStore;
 import com.github.hicolors.leisure.member.model.persistence.Member;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -31,24 +32,24 @@ public class SignServiceImpl implements SignService {
     private static final String VALIDATION_CODE = "000000";
 
     @Autowired
-    private UserClient userClient;
+    private SignInClient userClient;
 
     @Autowired
-    private RedisTokenStore tokenStore;
+    private TokenStore redisTokenStore;
 
     @Override
-    public AuthTokenModel password(SignInPassword model) {
+    public AuthToken password(SignInPassword model) {
         Member member;
         try {
             member = userClient.queryOneByUniqueKeyAndPassword(model.getUsername(), model.getPassword());
         } catch (ExtensionException e) {
             throw new BackendGatewayServerException(EnumCodeMessage.CREDENTIAL_ERROR);
         }
-        return tokenStore.storeAccessToken(userClient.queryMemberAuthorization(member.getId()));
+        return redisTokenStore.storeAccessToken(userClient.queryMemberAuthorization(member.getId()));
     }
 
     @Override
-    public AuthTokenModel mobile(SignInMobile model) {
+    public AuthToken mobile(SignInMobile model) {
         if (!StringUtils.equals(VALIDATION_CODE, model.getValidationCode())) {
             throw new BackendGatewayServerException(EnumCodeMessage.VALIDATION_CODE_ERROR);
         }
@@ -58,11 +59,11 @@ public class SignServiceImpl implements SignService {
         } catch (ExtensionException e) {
             throw new BackendGatewayServerException(EnumCodeMessage.MEMBER_NON_EXSIT);
         }
-        return tokenStore.storeAccessToken(userClient.queryMemberAuthorization(member.getId()));
+        return redisTokenStore.storeAccessToken(userClient.queryMemberAuthorization(member.getId()));
     }
 
     @Override
-    public AuthTokenModel email(SignInEmail model) {
+    public AuthToken email(SignInEmail model) {
         if (!StringUtils.equals(VALIDATION_CODE, model.getValidationCode())) {
             throw new BackendGatewayServerException(EnumCodeMessage.VALIDATION_CODE_ERROR);
         }
@@ -72,12 +73,12 @@ public class SignServiceImpl implements SignService {
         } catch (ExtensionException e) {
             throw new BackendGatewayServerException(EnumCodeMessage.MEMBER_NON_EXSIT);
         }
-        return tokenStore.storeAccessToken(userClient.queryMemberAuthorization(member.getId()));
+        return redisTokenStore.storeAccessToken(userClient.queryMemberAuthorization(member.getId()));
     }
 
     @Override
-    public AuthTokenModel refreshToken(SignInRefreshToken model) {
-        Long userId = tokenStore.findByRefreshToken(model.getRefreshToken());
+    public AuthToken refreshToken(SignInRefreshToken model) {
+        Long userId = redisTokenStore.findByRefreshToken(model.getRefreshToken());
         if (userId == 0L) {
             throw new BackendGatewayServerException(EnumCodeMessage.REFRESH_TOKEN_ERROR);
         }
@@ -87,13 +88,13 @@ public class SignServiceImpl implements SignService {
         } catch (ExtensionException e) {
             throw new BackendGatewayServerException(EnumCodeMessage.MEMBER_NON_EXSIT);
         }
-        return tokenStore.storeAccessToken(userClient.queryMemberAuthorization(member.getId()));
+        return redisTokenStore.storeAccessToken(userClient.queryMemberAuthorization(member.getId()));
     }
 
     @Override
     public void signOut(String accessToken) {
-        Long userId = tokenStore.findByAccessToken(accessToken);
+        Long userId = redisTokenStore.findByAccessToken(accessToken);
         log.info("sign out user :{}", userId);
-        tokenStore.clearToken(userId);
+        redisTokenStore.clearToken(userId);
     }
 }

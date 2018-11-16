@@ -1,10 +1,10 @@
 package com.github.hicolors.leisure.backend.gateway.application.service;
 
-import com.github.hicolors.leisure.backend.gateway.model.auth.AuthTokenModel;
 import com.github.hicolors.leisure.backend.gateway.model.sign.SignInEmail;
 import com.github.hicolors.leisure.backend.gateway.model.sign.SignInMobile;
 import com.github.hicolors.leisure.backend.gateway.model.sign.SignInPassword;
 import com.github.hicolors.leisure.backend.gateway.model.sign.SignInRefreshToken;
+import com.github.hicolors.leisure.member.authorization.token.impl.AuthToken;
 
 /**
  * SignService
@@ -14,13 +14,13 @@ import com.github.hicolors.leisure.backend.gateway.model.sign.SignInRefreshToken
  */
 public interface SignService {
 
-    AuthTokenModel password(SignInPassword model);
+    AuthToken password(SignInPassword model);
 
-    AuthTokenModel mobile(SignInMobile model);
+    AuthToken mobile(SignInMobile model);
 
-    AuthTokenModel email(SignInEmail model);
+    AuthToken email(SignInEmail model);
 
-    AuthTokenModel refreshToken(SignInRefreshToken model);
+    AuthToken refreshToken(SignInRefreshToken model);
 
     void signOut(String accessToken);
 }

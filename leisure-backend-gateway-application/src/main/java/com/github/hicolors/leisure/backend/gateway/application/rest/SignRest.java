@@ -1,16 +1,14 @@
 package com.github.hicolors.leisure.backend.gateway.application.rest;
 
 import com.github.hicolors.leisure.backend.gateway.application.service.SignService;
-import com.github.hicolors.leisure.backend.gateway.model.auth.AuthTokenModel;
 import com.github.hicolors.leisure.backend.gateway.model.sign.*;
+import com.github.hicolors.leisure.member.authorization.token.impl.AuthToken;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import java.text.MessageFormat;
 
@@ -32,7 +30,7 @@ public class SignRest {
 
     @ApiOperation("登入 - 密码")
     @PostMapping("/sign-in/password")
-    public AuthTokenModel signInPassword(@RequestBody @Validated SignInPassword model) {
+    public AuthToken signInPassword(@RequestBody @Validated SignInPassword model) {
         return signService.password(model);
     }
 
@@ -44,7 +42,7 @@ public class SignRest {
 
     @ApiOperation("登入 - 手机")
     @PostMapping("/sign-in/mobile")
-    public AuthTokenModel signInMobile(@RequestBody @Validated SignInMobile model) {
+    public AuthToken signInMobile(@RequestBody @Validated SignInMobile model) {
         return signService.mobile(model);
     }
 
@@ -56,13 +54,13 @@ public class SignRest {
 
     @ApiOperation("登入 - 邮箱")
     @PostMapping("/sign-in/email")
-    public AuthTokenModel signInEmail(@RequestBody @Validated SignInEmail model) {
+    public AuthToken signInEmail(@RequestBody @Validated SignInEmail model) {
         return signService.email(model);
     }
 
     @ApiOperation("登入 - 刷新 token")
     @PostMapping("/sign-in/refresh-token")
-    public AuthTokenModel signInRefreshToken(@RequestBody @Validated SignInRefreshToken model) {
+    public AuthToken signInRefreshToken(@RequestBody @Validated SignInRefreshToken model) {
         return signService.refreshToken(model);
     }
 

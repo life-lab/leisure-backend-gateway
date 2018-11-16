@@ -33,7 +33,7 @@
 
         <dependency>
             <groupId>com.github.hicolors.leisure</groupId>
-            <artifactId>leisure-member-model</artifactId>
+            <artifactId>leisure-member-authorization</artifactId>
             <version>${leisure-member.version}</version>
         </dependency>
 
