@@ -31,7 +31,15 @@
 
         <dependencies>
 
+
+            <dependency>
+                <groupId>com.github.hicolors.leisure</groupId>
+                <artifactId>leisure-member-authorization</artifactId>
+                <version>${leisure-member.version}</version>
+            </dependency>
+
         </dependencies>
+
     </dependencyManagement>
 
 </project>

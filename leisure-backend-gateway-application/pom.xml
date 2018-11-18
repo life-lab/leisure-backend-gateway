@@ -23,8 +23,13 @@
 
         <dependency>
             <groupId>com.github.hicolors.leisure</groupId>
+            <artifactId>leisure-backend-gateway-sdk</artifactId>
+            <version>${leisure-backend-gateway.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.hicolors.leisure</groupId>
             <artifactId>leisure-member-authorization</artifactId>
-            <version>${leisure-member.version}</version>
         </dependency>
 
         <dependency>

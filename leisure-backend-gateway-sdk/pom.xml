@@ -4,13 +4,37 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <artifactId>leisure-backend-gateway-sdk</artifactId>
+    <packaging>jar</packaging>
+
     <parent>
         <groupId>com.github.hicolors.leisure</groupId>
         <artifactId>leisure-backend-gateway</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>leisure-backend-gateway-sdk</artifactId>
-    <packaging>jar</packaging>
+    <dependencies>
+
+        <dependency>
+            <groupId>com.github.hicolors.leisure</groupId>
+            <artifactId>leisure-member-authorization</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.hicolors</groupId>
+            <artifactId>common-utils</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+
+    </dependencies>
 
 </project>

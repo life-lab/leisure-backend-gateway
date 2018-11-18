@@ -1,9 +1,9 @@
 package com.github.hicolors.leisure.backend.gateway.application.filter.pre;
 
-import com.github.hicolors.leisure.backend.gateway.application.consts.AuthenticationConsts;
 import com.github.hicolors.leisure.backend.gateway.application.exception.BackendGatewayServerException;
 import com.github.hicolors.leisure.backend.gateway.application.exception.EnumCodeMessage;
 import com.github.hicolors.leisure.backend.gateway.application.filter.FilterOrder;
+import com.github.hicolors.leisure.backend.gateway.sdk.consts.AuthenticationConsts;
 import com.github.hicolors.leisure.member.authorization.token.TokenStore;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;

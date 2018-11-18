@@ -1,4 +1,4 @@
-package com.github.hicolors.leisure.backend.gateway.application.consts;
+package com.github.hicolors.leisure.backend.gateway.sdk.consts;
 
 /**
  * AuthenticationConsts
