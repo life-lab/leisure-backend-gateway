@@ -13,8 +13,9 @@ spring:
     username: leisure
     password: leisure
     publisher-confirms: true
+
 zuul:
   routes:
-    leisure-member:
-      path : /leisure-member/**
-      url : http://http://127.0.0.1:10002/leisure-member
+    leisure-member-api:
+      path : /leisure-member-api/**
+      url : http://127.0.0.1:10001/leisure-member-api

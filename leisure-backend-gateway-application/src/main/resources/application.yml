@@ -10,7 +10,7 @@ warning:
 
 leisure-member:
   ribbon:
-    listOfServers: http://47.105.97.16:10002
+    listOfServers: http://127.0.0.1:10002
 
 spring:
   redis:
@@ -19,7 +19,6 @@ spring:
     database: 0
 
 zuul:
-  routes:
-    leisure-member:
-      path : /leisure-member/**
-      url : http://47.105.97.16:8080/leisure-member
+  SendErrorFilter:
+    error:
+      disable: true

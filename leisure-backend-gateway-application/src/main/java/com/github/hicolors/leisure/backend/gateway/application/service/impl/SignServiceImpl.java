@@ -82,7 +82,7 @@ public class SignServiceImpl implements SignService {
 
     @Override
     public AuthToken refreshToken(SignInRefreshToken model) {
-        Long userId = redisTokenStore.findByRefreshToken(model.getRefreshToken());
+        Long userId = redisTokenStore.findUserIdByRefreshToken(model.getRefreshToken());
         if (userId == 0L) {
             throw new BackendGatewayServerException(EnumCodeMessage.REFRESH_TOKEN_ERROR);
         }
@@ -103,7 +103,7 @@ public class SignServiceImpl implements SignService {
 
     @Override
     public void signOut(String accessToken) {
-        Long userId = redisTokenStore.findByAccessToken(accessToken);
+        Long userId = redisTokenStore.findUserIdByAccessToken(accessToken);
         log.info("sign out user :{}", userId);
         redisTokenStore.clearToken(userId);
     }

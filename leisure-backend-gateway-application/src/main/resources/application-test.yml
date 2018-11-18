@@ -16,6 +16,6 @@ spring:
 
 zuul:
   routes:
-    leisure-member:
-      path : /leisure-member/**
-      url : http://47.105.97.16:10002/leisure-member
+    leisure-member-api:
+      path : /leisure-member-api/**
+      url : http://47.105.97.16:10001/leisure-member-api
