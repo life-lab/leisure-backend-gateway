@@ -3,8 +3,8 @@ package com.github.hicolors.leisure.backend.gateway.model.sign;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
 
-import javax.validation.constraints.NotBlank;
 
 /**
  * SignInUsernamePassword

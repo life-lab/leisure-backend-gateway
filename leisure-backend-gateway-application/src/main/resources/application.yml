@@ -23,8 +23,3 @@ zuul:
     leisure-member:
       path : /leisure-member/**
       url : http://47.105.97.16:8080/leisure-member
-
-aliyun:
-  sls:
-    projectName: leisure-backend-gateway
-    logFileName: leisure-backend-gateway

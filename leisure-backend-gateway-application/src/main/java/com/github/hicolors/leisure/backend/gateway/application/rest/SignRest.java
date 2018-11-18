@@ -22,7 +22,6 @@ import java.text.MessageFormat;
 @Api(tags = "sign", description = "登入/登出/注册等 相关操作")
 @RestController
 @RequestMapping("/")
-@Validated
 public class SignRest {
 
     @Autowired

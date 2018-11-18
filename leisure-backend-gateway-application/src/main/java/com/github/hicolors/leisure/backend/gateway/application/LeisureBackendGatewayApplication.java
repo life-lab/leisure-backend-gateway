@@ -2,6 +2,7 @@ package com.github.hicolors.leisure.backend.gateway.application;
 
 import com.github.hicolors.leisure.member.authorization.token.TokenStore;
 import com.github.hicolors.leisure.member.authorization.token.impl.RedisTokenStore;
+import com.github.hicolors.leisure.member.authorization.validator.MemberValidator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
@@ -24,6 +25,11 @@ public class LeisureBackendGatewayApplication {
     @Bean
     public TokenStore redisTokenStore() {
         return new RedisTokenStore();
+    }
+
+    @Bean
+    public MemberValidator memberValidator() {
+        return new MemberValidator();
     }
 
     public static void main(String[] args) {

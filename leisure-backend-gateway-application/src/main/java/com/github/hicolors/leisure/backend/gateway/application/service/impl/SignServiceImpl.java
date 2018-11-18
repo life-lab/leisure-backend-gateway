@@ -11,7 +11,8 @@ import com.github.hicolors.leisure.common.exception.ExtensionException;
 import com.github.hicolors.leisure.member.authorization.feign.SignInClient;
 import com.github.hicolors.leisure.member.authorization.token.TokenStore;
 import com.github.hicolors.leisure.member.authorization.token.impl.AuthToken;
-import com.github.hicolors.leisure.member.authorization.token.impl.RedisTokenStore;
+import com.github.hicolors.leisure.member.authorization.validator.MemberValidator;
+import com.github.hicolors.leisure.member.authorization.validator.exception.MemberAuthorizationException;
 import com.github.hicolors.leisure.member.model.persistence.Member;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -37,6 +38,9 @@ public class SignServiceImpl implements SignService {
     @Autowired
     private TokenStore redisTokenStore;
 
+    @Autowired
+    private MemberValidator memberValidator;
+
     @Override
     public AuthToken password(SignInPassword model) {
         Member member;
@@ -45,7 +49,7 @@ public class SignServiceImpl implements SignService {
         } catch (ExtensionException e) {
             throw new BackendGatewayServerException(EnumCodeMessage.CREDENTIAL_ERROR);
         }
-        return redisTokenStore.storeAccessToken(userClient.queryMemberAuthorization(member.getId()));
+        return storeAccessToken(member);
     }
 
     @Override
@@ -59,7 +63,7 @@ public class SignServiceImpl implements SignService {
         } catch (ExtensionException e) {
             throw new BackendGatewayServerException(EnumCodeMessage.MEMBER_NON_EXSIT);
         }
-        return redisTokenStore.storeAccessToken(userClient.queryMemberAuthorization(member.getId()));
+        return storeAccessToken(member);
     }
 
     @Override
@@ -73,7 +77,7 @@ public class SignServiceImpl implements SignService {
         } catch (ExtensionException e) {
             throw new BackendGatewayServerException(EnumCodeMessage.MEMBER_NON_EXSIT);
         }
-        return redisTokenStore.storeAccessToken(userClient.queryMemberAuthorization(member.getId()));
+        return storeAccessToken(member);
     }
 
     @Override
@@ -86,8 +90,14 @@ public class SignServiceImpl implements SignService {
         try {
             member = userClient.queryOneById(userId);
         } catch (ExtensionException e) {
+            log.info("query member by id[{}] error", userId);
             throw new BackendGatewayServerException(EnumCodeMessage.MEMBER_NON_EXSIT);
         }
+        return storeAccessToken(member);
+    }
+
+    private AuthToken storeAccessToken(Member member) {
+        memberValidator.validator(member);
         return redisTokenStore.storeAccessToken(userClient.queryMemberAuthorization(member.getId()));
     }
 
@@ -96,5 +106,23 @@ public class SignServiceImpl implements SignService {
         Long userId = redisTokenStore.findByAccessToken(accessToken);
         log.info("sign out user :{}", userId);
         redisTokenStore.clearToken(userId);
+    }
+
+    @Override
+    public void memberListener(Long id) {
+        Member member;
+        try {
+            member = userClient.queryOneById(id);
+        } catch (ExtensionException e) {
+            log.info("query member by id[{}] error", id);
+            throw new BackendGatewayServerException(EnumCodeMessage.MEMBER_NON_EXSIT);
+        }
+        try {
+            memberValidator.validator(member);
+            redisTokenStore.storeUserInfo(userClient.queryMemberAuthorization(member.getId()));
+        } catch (MemberAuthorizationException e) {
+            log.info("member [{}] verification failed,clear all tokens now!", id);
+            redisTokenStore.clearToken(id);
+        }
     }
 }

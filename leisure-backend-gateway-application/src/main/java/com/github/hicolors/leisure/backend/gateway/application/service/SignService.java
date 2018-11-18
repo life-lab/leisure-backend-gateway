@@ -23,4 +23,6 @@ public interface SignService {
     AuthToken refreshToken(SignInRefreshToken model);
 
     void signOut(String accessToken);
+
+    void memberListener(Long id);
 }

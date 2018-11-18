@@ -1,0 +1,21 @@
+leisure-member:
+  ribbon:
+    listOfServers: http://47.105.97.16:10002
+
+spring:
+  redis:
+    host: 47.105.97.16
+    port: 16379
+    database: 0
+  rabbitmq:
+    addresses: 47.101.155.253
+    port: 5672
+    username: leisure
+    password: leisure
+    publisher-confirms: true
+
+zuul:
+  routes:
+    leisure-member:
+      path : /leisure-member/**
+      url : http://47.105.97.16:10002/leisure-member
