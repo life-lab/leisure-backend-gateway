@@ -1,7 +1,7 @@
 package com.github.hicolors.leisure.backend.gateway.application.filter.pre;
 
 import com.github.hicolors.leisure.backend.gateway.application.exception.BackendGatewayServerException;
-import com.github.hicolors.leisure.backend.gateway.application.exception.EnumCodeMessage;
+import com.github.hicolors.leisure.backend.gateway.application.exception.EnumBackendGatewayCodeMessage;
 import com.github.hicolors.leisure.backend.gateway.application.filter.FilterOrder;
 import com.github.hicolors.leisure.backend.gateway.sdk.consts.AuthenticationConsts;
 import com.github.hicolors.leisure.member.authorization.token.TokenStore;
@@ -74,16 +74,16 @@ public class AuthenticationFilter extends ZuulFilter {
         }
         String accessToken = request.getHeader(AuthenticationConsts.HEADER_AUTHENTICATION);
         if (Objects.isNull(accessToken)) {
-            throw new BackendGatewayServerException(EnumCodeMessage.ACCESS_TOKEN_IS_NULL);
+            throw new BackendGatewayServerException(EnumBackendGatewayCodeMessage.ACCESS_TOKEN_IS_NULL);
         }
 
         Long userId = redisTokenStore.findUserIdByAccessToken(accessToken);
         if (userId == 0L) {
-            throw new BackendGatewayServerException(EnumCodeMessage.ACCESS_TOKEN_IS_INVALID);
+            throw new BackendGatewayServerException(EnumBackendGatewayCodeMessage.ACCESS_TOKEN_IS_INVALID);
         }
         String userInfo = redisTokenStore.findUserInfoByUserId(userId);
         if (StringUtils.isBlank(userInfo)) {
-            throw new BackendGatewayServerException(EnumCodeMessage.USER_INFO_IS_BLANK);
+            throw new BackendGatewayServerException(EnumBackendGatewayCodeMessage.USER_INFO_IS_BLANK);
         }
         try {
             //URLEncoder防止中文乱码

@@ -10,15 +10,15 @@ import com.github.hicolors.leisure.common.exception.BusinessException;
  */
 public class BackendGatewayServerException extends BusinessException {
 
-    public BackendGatewayServerException(EnumCodeMessage codeMessage) {
+    public BackendGatewayServerException(EnumBackendGatewayCodeMessage codeMessage) {
         super(codeMessage.getCode(), codeMessage.getMessage(), null);
     }
 
-    public BackendGatewayServerException(EnumCodeMessage codeMessage, Object data) {
+    public BackendGatewayServerException(EnumBackendGatewayCodeMessage codeMessage, Object data) {
         super(codeMessage.getCode(), codeMessage.getMessage(), data);
     }
 
-    public BackendGatewayServerException(EnumCodeMessage codeMessage, String msg) {
+    public BackendGatewayServerException(EnumBackendGatewayCodeMessage codeMessage, String msg) {
         super(codeMessage.getCode(), msg, null);
     }
 }

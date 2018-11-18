@@ -22,3 +22,7 @@ zuul:
   SendErrorFilter:
     error:
       disable: true
+
+ribbon:
+  eureka:
+    enabled: false

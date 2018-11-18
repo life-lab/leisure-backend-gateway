@@ -2,6 +2,10 @@ leisure-member:
   ribbon:
     listOfServers: http://127.0.0.1:10002
 
+leisure-member-api:
+  ribbon:
+    listOfServers: http://127.0.0.1:10001
+
 spring:
   redis:
     host: 47.105.97.16
@@ -13,9 +17,9 @@ spring:
     username: leisure
     password: leisure
     publisher-confirms: true
-
+    publisher-returns: true
 zuul:
   routes:
     leisure-member-api:
-      path : /leisure-member-api/**
-      url : http://127.0.0.1:10001/leisure-member-api
+      path: /leisure-member-api/**
+      stripPrefix: false

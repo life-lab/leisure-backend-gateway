@@ -1,7 +1,7 @@
 package com.github.hicolors.leisure.backend.gateway.application.service.impl;
 
 import com.github.hicolors.leisure.backend.gateway.application.exception.BackendGatewayServerException;
-import com.github.hicolors.leisure.backend.gateway.application.exception.EnumCodeMessage;
+import com.github.hicolors.leisure.backend.gateway.application.exception.EnumBackendGatewayCodeMessage;
 import com.github.hicolors.leisure.backend.gateway.application.service.SignService;
 import com.github.hicolors.leisure.backend.gateway.model.sign.SignInEmail;
 import com.github.hicolors.leisure.backend.gateway.model.sign.SignInMobile;
@@ -47,7 +47,7 @@ public class SignServiceImpl implements SignService {
         try {
             member = userClient.queryOneByUniqueKeyAndPassword(model.getUsername(), model.getPassword());
         } catch (ExtensionException e) {
-            throw new BackendGatewayServerException(EnumCodeMessage.CREDENTIAL_ERROR);
+            throw new BackendGatewayServerException(EnumBackendGatewayCodeMessage.CREDENTIAL_ERROR);
         }
         return storeAccessToken(member);
     }
@@ -55,13 +55,13 @@ public class SignServiceImpl implements SignService {
     @Override
     public AuthToken mobile(SignInMobile model) {
         if (!StringUtils.equals(VALIDATION_CODE, model.getValidationCode())) {
-            throw new BackendGatewayServerException(EnumCodeMessage.VALIDATION_CODE_ERROR);
+            throw new BackendGatewayServerException(EnumBackendGatewayCodeMessage.VALIDATION_CODE_ERROR);
         }
         Member member;
         try {
             member = userClient.queryOneByMobile(model.getMobile());
         } catch (ExtensionException e) {
-            throw new BackendGatewayServerException(EnumCodeMessage.MEMBER_NON_EXSIT);
+            throw new BackendGatewayServerException(EnumBackendGatewayCodeMessage.MEMBER_NON_EXSIT);
         }
         return storeAccessToken(member);
     }
@@ -69,13 +69,13 @@ public class SignServiceImpl implements SignService {
     @Override
     public AuthToken email(SignInEmail model) {
         if (!StringUtils.equals(VALIDATION_CODE, model.getValidationCode())) {
-            throw new BackendGatewayServerException(EnumCodeMessage.VALIDATION_CODE_ERROR);
+            throw new BackendGatewayServerException(EnumBackendGatewayCodeMessage.VALIDATION_CODE_ERROR);
         }
         Member member;
         try {
             member = userClient.queryOneByEmail(model.getEmail());
         } catch (ExtensionException e) {
-            throw new BackendGatewayServerException(EnumCodeMessage.MEMBER_NON_EXSIT);
+            throw new BackendGatewayServerException(EnumBackendGatewayCodeMessage.MEMBER_NON_EXSIT);
         }
         return storeAccessToken(member);
     }
@@ -84,14 +84,14 @@ public class SignServiceImpl implements SignService {
     public AuthToken refreshToken(SignInRefreshToken model) {
         Long userId = redisTokenStore.findUserIdByRefreshToken(model.getRefreshToken());
         if (userId == 0L) {
-            throw new BackendGatewayServerException(EnumCodeMessage.REFRESH_TOKEN_ERROR);
+            throw new BackendGatewayServerException(EnumBackendGatewayCodeMessage.REFRESH_TOKEN_ERROR);
         }
         Member member;
         try {
             member = userClient.queryOneById(userId);
         } catch (ExtensionException e) {
             log.info("query member by id[{}] error", userId);
-            throw new BackendGatewayServerException(EnumCodeMessage.MEMBER_NON_EXSIT);
+            throw new BackendGatewayServerException(EnumBackendGatewayCodeMessage.MEMBER_NON_EXSIT);
         }
         return storeAccessToken(member);
     }
@@ -115,7 +115,7 @@ public class SignServiceImpl implements SignService {
             member = userClient.queryOneById(id);
         } catch (ExtensionException e) {
             log.info("query member by id[{}] error", id);
-            throw new BackendGatewayServerException(EnumCodeMessage.MEMBER_NON_EXSIT);
+            throw new BackendGatewayServerException(EnumBackendGatewayCodeMessage.MEMBER_NON_EXSIT);
         }
         try {
             memberValidator.validator(member);

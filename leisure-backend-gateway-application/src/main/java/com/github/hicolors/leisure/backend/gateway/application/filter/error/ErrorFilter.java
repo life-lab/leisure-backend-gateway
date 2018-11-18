@@ -46,15 +46,13 @@ import static org.springframework.cloud.netflix.zuul.filters.support.FilterConst
 @Slf4j
 public class ErrorFilter extends ZuulFilter {
 
+    private static final long UNEXPECT_EXCEPTION_CODE = 88888888L;
     @Value("${aliyun.sls.projectName:}")
     private String projectName;
-
     @Value("${aliyun.sls.logStoreName:}")
     private String logStoreName;
-
     @Autowired
     private Tracer tracer;
-
     @Autowired
     private EnvHelper envHelper;
 
@@ -72,8 +70,6 @@ public class ErrorFilter extends ZuulFilter {
     public boolean shouldFilter() {
         return Objects.nonNull(RequestContext.getCurrentContext().getThrowable());
     }
-
-    private static final long UNEXPECT_EXCEPTION_CODE = 88888888L;
 
     @Override
     public Object run() {

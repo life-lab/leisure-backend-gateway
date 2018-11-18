@@ -23,6 +23,8 @@ public interface FilterOrder {
 
     /** router **/
 
-    /** error **/
+    /**
+     * error
+     **/
     int ERROR_FILTER_ORDER = SEND_ERROR_FILTER_ORDER;
 }

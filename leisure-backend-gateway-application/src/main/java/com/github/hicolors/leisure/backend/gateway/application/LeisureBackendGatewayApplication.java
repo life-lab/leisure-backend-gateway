@@ -22,6 +22,10 @@ import org.springframework.context.annotation.Bean;
 @EnableZuulProxy
 public class LeisureBackendGatewayApplication {
 
+    public static void main(String[] args) {
+        SpringApplication.run(LeisureBackendGatewayApplication.class, args);
+    }
+
     @Bean
     public TokenStore redisTokenStore() {
         return new RedisTokenStore();
@@ -30,10 +34,6 @@ public class LeisureBackendGatewayApplication {
     @Bean
     public MemberValidator memberValidator() {
         return new MemberValidator();
-    }
-
-    public static void main(String[] args) {
-        SpringApplication.run(LeisureBackendGatewayApplication.class, args);
     }
 
 }

@@ -1,6 +1,8 @@
 package com.github.hicolors.leisure.backend.gateway.sdk.resolver;
 
 import com.github.hicolors.leisure.backend.gateway.sdk.consts.AuthenticationConsts;
+import com.github.hicolors.leisure.backend.gateway.sdk.exception.BackendGatewaySdkException;
+import com.github.hicolors.leisure.backend.gateway.sdk.exception.EnumBackendGatewaySdkCodeMessage;
 import com.github.hicolors.leisure.common.utils.JsonUtils;
 import com.github.hicolors.leisure.member.authorization.token.UserInfo;
 import com.github.hicolors.leisure.member.authorization.token.impl.MemberAuthorization;
@@ -36,7 +38,7 @@ public class UserInfoArgumentResolver implements HandlerMethodArgumentResolver {
         String userInfoJson = webRequest.getHeader(AuthenticationConsts.HEADER_USER_INFO);
         MemberAuthorization userInfo;
         if (StringUtils.isBlank(userInfoJson)) {
-            throw new RuntimeException("can't resolve argument auth token from request header");
+            throw new BackendGatewaySdkException(EnumBackendGatewaySdkCodeMessage.USER_INFO_NOT_FOUND);
         }
         String userInfoJsonUTF8 = URLDecoder.decode(userInfoJson, "UTF-8");
         userInfo = JsonUtils.deserialize(userInfoJsonUTF8, MemberAuthorization.class);

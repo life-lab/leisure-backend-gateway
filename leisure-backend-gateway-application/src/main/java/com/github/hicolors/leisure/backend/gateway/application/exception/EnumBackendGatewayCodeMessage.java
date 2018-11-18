@@ -6,7 +6,7 @@ package com.github.hicolors.leisure.backend.gateway.application.exception;
  * @author weichao.li (liweichao0102@gmail.com)
  * @date 2018/10/22
  */
-public enum EnumCodeMessage {
+public enum EnumBackendGatewayCodeMessage {
 
     /**
      * member 服务全局错误异常码
@@ -33,13 +33,15 @@ public enum EnumCodeMessage {
     REFRESH_TOKEN_ERROR(101001002L, "refresh token 不正确"),
     MEMBER_NON_EXSIT(101001003L, "用户不存在"),
 
+    /********* sdk 透传相关  保留 101100xxx 段 *********/
+
     ;
 
     private final Long code;
 
     private final String message;
 
-    EnumCodeMessage(Long code, String message) {
+    EnumBackendGatewayCodeMessage(Long code, String message) {
         this.code = code;
         this.message = message;
     }
