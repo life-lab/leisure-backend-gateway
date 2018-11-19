@@ -159,7 +159,7 @@ public class ErrorFilter extends ZuulFilter {
                     tracer.currentSpan().context().traceIdString(),
                     uri,
                     request.getMethod(),
-                    null,
+                    "请查看 access log.",
                     null,
                     new Date(),
                     exceptionMsg(exception));
