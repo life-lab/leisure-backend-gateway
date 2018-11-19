@@ -19,8 +19,7 @@ spring:
     port: 5672
     username: leisure
     password: leisure
-    publisher-confirms: true
-    publisher-returns: true
+
 zuul:
   routes:
     leisure-member-api:

@@ -5,14 +5,32 @@ server:
   servlet:
     context-path: /
 
+spring:
+  rabbitmq:
+    publisher-confirms: true
+    publisher-returns: true
+
+hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 60000
+ribbon:
+  ConnectTimeout: 3000
+  ReadTimeout: 60000
+  eureka:
+    enabled: false
+
 zuul:
   SendErrorFilter:
     error:
       disable: true
+      
+  routes:
+    authentication-api:
+      path: /authentication/**
+      stripPrefix: true
+      url: forward:/
 
-ribbon:
-  eureka:
-    enabled: false
+authentication:
+  non-require:
+    uris: /authentication/**,/**/**swagger**/**,/**/v2/api-docs
 
 access:
   logger:
