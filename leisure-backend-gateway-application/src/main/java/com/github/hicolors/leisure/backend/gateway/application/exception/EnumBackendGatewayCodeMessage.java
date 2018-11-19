@@ -22,10 +22,7 @@ public enum EnumBackendGatewayCodeMessage {
      *
      */
 
-    /********* 验证相关 *********/
-    ACCESS_TOKEN_IS_NULL(101000001L, "访问令牌不能为空！"),
-    ACCESS_TOKEN_IS_INVALID(101000002L, "访问令牌无效！"),
-    USER_INFO_IS_BLANK(101000003L, "暂无用户信息，请重新登录！"),
+    /********* 验证相关 1010000xxx  定义在 sdk 中 *********/
 
     /********* 角色权限相关 *********/
     CREDENTIAL_ERROR(101001000L, "用户名密码不匹配"),
@@ -33,7 +30,6 @@ public enum EnumBackendGatewayCodeMessage {
     REFRESH_TOKEN_ERROR(101001002L, "refresh token 不正确"),
     MEMBER_NON_EXSIT(101001003L, "用户不存在"),
 
-    /********* sdk 透传相关  保留 101100xxx 段 *********/
 
     ;
 

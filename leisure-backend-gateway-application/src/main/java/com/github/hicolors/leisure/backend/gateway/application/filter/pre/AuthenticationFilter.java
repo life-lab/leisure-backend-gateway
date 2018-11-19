@@ -1,9 +1,9 @@
 package com.github.hicolors.leisure.backend.gateway.application.filter.pre;
 
-import com.github.hicolors.leisure.backend.gateway.application.exception.BackendGatewayServerException;
-import com.github.hicolors.leisure.backend.gateway.application.exception.EnumBackendGatewayCodeMessage;
 import com.github.hicolors.leisure.backend.gateway.application.filter.FilterOrder;
 import com.github.hicolors.leisure.backend.gateway.sdk.consts.AuthenticationConsts;
+import com.github.hicolors.leisure.backend.gateway.sdk.exception.AuthorizationException;
+import com.github.hicolors.leisure.backend.gateway.sdk.exception.EnumAuthorizationExceptionCodeMessage;
 import com.github.hicolors.leisure.common.framework.logger.ExtraParamUtils;
 import com.github.hicolors.leisure.member.authorization.token.TokenStore;
 import com.netflix.zuul.ZuulFilter;
@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
-import java.util.Objects;
 
 import static org.springframework.cloud.netflix.zuul.filters.support.FilterConstants.PRE_TYPE;
 
@@ -74,17 +73,17 @@ public class AuthenticationFilter extends ZuulFilter {
             return null;
         }
         String accessToken = request.getHeader(AuthenticationConsts.HEADER_AUTHENTICATION);
-        if (Objects.isNull(accessToken)) {
-            throw new BackendGatewayServerException(EnumBackendGatewayCodeMessage.ACCESS_TOKEN_IS_NULL);
+        if (StringUtils.isBlank(accessToken)) {
+            throw new AuthorizationException(EnumAuthorizationExceptionCodeMessage.ACCESS_TOKEN_IS_NULL);
         }
 
         Long userId = redisTokenStore.findUserIdByAccessToken(accessToken);
         if (userId == 0L) {
-            throw new BackendGatewayServerException(EnumBackendGatewayCodeMessage.ACCESS_TOKEN_IS_INVALID);
+            throw new AuthorizationException(EnumAuthorizationExceptionCodeMessage.ACCESS_TOKEN_IS_INVALID);
         }
         String userInfo = redisTokenStore.findUserInfoByUserId(userId);
         if (StringUtils.isBlank(userInfo)) {
-            throw new BackendGatewayServerException(EnumBackendGatewayCodeMessage.USER_INFO_IS_BLANK);
+            throw new AuthorizationException(EnumAuthorizationExceptionCodeMessage.USER_INFO_IS_BLANK);
         }
         try {
             //追加 access log 额外信息
