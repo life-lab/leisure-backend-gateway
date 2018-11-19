@@ -1,11 +1,14 @@
 leisure-member:
   ribbon:
     listOfServers: http://127.0.0.1:10002
+    ReadTimeout: 5000
+    ConnectTimeout: 5000
 
 leisure-member-api:
   ribbon:
     listOfServers: http://127.0.0.1:10001
-
+    ReadTimeout: 5000
+    ConnectTimeout: 5000
 spring:
   redis:
     host: 47.105.97.16

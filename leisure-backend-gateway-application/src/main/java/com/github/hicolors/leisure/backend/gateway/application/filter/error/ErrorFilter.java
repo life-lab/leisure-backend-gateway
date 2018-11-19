@@ -4,7 +4,6 @@ import brave.Tracer;
 import com.github.hicolors.leisure.backend.gateway.application.filter.FilterOrder;
 import com.github.hicolors.leisure.common.exception.ExtensionException;
 import com.github.hicolors.leisure.common.exception.HttpStatus;
-import com.github.hicolors.leisure.common.framework.logger.LoggerConst;
 import com.github.hicolors.leisure.common.framework.springmvc.advice.enhance.event.ErrorEvent;
 import com.github.hicolors.leisure.common.framework.utils.EnvHelper;
 import com.github.hicolors.leisure.common.framework.utils.SpringContextUtils;
@@ -22,15 +21,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.servlet.NoHandlerFoundException;
-import org.springframework.web.util.ContentCachingRequestWrapper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 import static org.apache.commons.codec.CharEncoding.UTF_8;
@@ -47,12 +42,16 @@ import static org.springframework.cloud.netflix.zuul.filters.support.FilterConst
 public class ErrorFilter extends ZuulFilter {
 
     private static final long UNEXPECT_EXCEPTION_CODE = 88888888L;
+
     @Value("${aliyun.sls.projectName:}")
     private String projectName;
+
     @Value("${aliyun.sls.logStoreName:}")
     private String logStoreName;
+
     @Autowired
     private Tracer tracer;
+
     @Autowired
     private EnvHelper envHelper;
 
@@ -75,46 +74,61 @@ public class ErrorFilter extends ZuulFilter {
     public Object run() {
         RequestContext ctx = RequestContext.getCurrentContext();
         Throwable e = ctx.getThrowable();
-
-        if (Objects.nonNull(e.getCause()) && e.getCause() instanceof ExtensionException) {
-            handle(ctx, e.getCause());
-        } else {
-            if (Objects.nonNull(e.getCause())) {
-                handle(ctx, e.getCause());
-            } else {
-                handle(ctx, e);
-            }
+        if (Objects.nonNull(e)) {
+            handle(ctx, getCause(e));
         }
         return null;
     }
 
+    /**
+     * 递归查询最底层异常
+     *
+     * @param cause
+     * @return
+     */
+    private Throwable getCause(Throwable cause) {
+        if (Objects.isNull(cause.getCause())) {
+            return cause;
+        } else {
+            return getCause(cause.getCause());
+        }
+    }
+
+    /**
+     * 异常流程处理
+     *
+     * @param ctx
+     * @param exception
+     */
     private void handle(RequestContext ctx, Throwable exception) {
         HttpServletRequest request = ctx.getRequest();
         HttpServletResponse response = ctx.getResponse();
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         response.setCharacterEncoding(UTF_8);
-
         ErrorResponse errorResponse = errorAttributes(exception, request, response);
-
         ctx.setResponseBody(JsonUtils.serialize(errorResponse));
     }
 
+    /**
+     * 同 AbstractExceptionHandlerAdvice 一样对流程进行处理，部分改造 - 针对网关特定处理/文案调整
+     *
+     * @param exception
+     * @param request
+     * @param response
+     * @return
+     */
     public ErrorResponse errorAttributes(Throwable exception, HttpServletRequest request, HttpServletResponse response) {
-
         // 异常错误返回时 添加 trace_id 到 response header 中
         response.setHeader("trace-id", tracer.currentSpan().context().traceIdString());
-
         //特定异常处理所需要的参数
         Object data;
-        Map paramMap = getParam(request);
         String url = request.getRequestURL().toString();
         String uri = request.getRequestURI();
-
         //拼装返回结果
         ErrorResponse errorResponse = new ErrorResponse(new Date(), uri);
-
         if (exception instanceof ExtensionException) {
-            log.warn(MessageFormat.format("当前程序进入到 zuul 异常捕获器，出错的 url 为：[ {0} ]，出错的参数为：[ {1} ]", url, JsonUtils.serialize(paramMap)), exception);
+            log.warn(MessageFormat.format("当前路由进入到 zuul error filter 中，出错的 url 为：[ {0} ]", url), exception);
+
             ExtensionException expectException = (ExtensionException) exception;
             errorResponse.setCode(expectException.getCode());
             errorResponse.setMessage(expectException.getMessage());
@@ -124,13 +138,14 @@ public class ErrorFilter extends ZuulFilter {
                 errorResponse.setException(expectException.getCause().getMessage());
             }
         } else {
-            log.error(MessageFormat.format("当前程序进入到 zuul 异常捕获器，出错的 url 为：[ {0} ]，出错的参数为：[ {1} ]", url, JsonUtils.serialize(paramMap)), exception);
+            log.error(MessageFormat.format("当前路由进入到 zuul error filter 中，出错的 url 为：[ {0} ]", url), exception);
+
             errorResponse.setCode(UNEXPECT_EXCEPTION_CODE);
             errorResponse.setMessage("服务器发生了点小故障，请联系客服人员！");
             errorResponse.setException(exception.getMessage());
             errorResponse.setStatus(HttpStatus.SERVICE_UNAVAILABLE.value());
             /**
-             * 参数校验异常特殊处理
+             * 特殊异常特殊处理
              */
             if (exception instanceof NoHandlerFoundException) {
                 errorResponse.setStatus(HttpStatus.NOT_FOUND.value());
@@ -140,11 +155,11 @@ public class ErrorFilter extends ZuulFilter {
                 errorResponse.setStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value());
             }
             data = new Warning(envHelper.getEnv(),
-                    "服务发生非预期异常",
+                    "网关路由时发生非预期异常",
                     tracer.currentSpan().context().traceIdString(),
                     uri,
                     request.getMethod(),
-                    JsonUtils.serialize(paramMap),
+                    null,
                     null,
                     new Date(),
                     exceptionMsg(exception));
@@ -152,25 +167,6 @@ public class ErrorFilter extends ZuulFilter {
         response.setStatus(errorResponse.getStatus());
         SpringContextUtils.publish(new ErrorEvent(errorResponse, data));
         return errorResponse;
-    }
-
-    @SuppressWarnings("unchecked")
-    private Map getParam(HttpServletRequest request) {
-        Map<String, Object> params = new HashMap<>(2);
-        if (request instanceof ContentCachingRequestWrapper) {
-            ContentCachingRequestWrapper requestWrapper = (ContentCachingRequestWrapper) request;
-            String requestBody = "";
-            try {
-                requestBody = new String(requestWrapper.getContentAsByteArray(), requestWrapper.getCharacterEncoding());
-                if (StringUtils.isNotBlank(requestBody)) {
-                    requestBody = org.springframework.util.StringUtils.trimAllWhitespace(requestBody);
-                }
-            } catch (IOException ignored) {
-            }
-            params.put(LoggerConst.REQUEST_KEY_FORM_PARAM, JsonUtils.serialize(request.getParameterMap()));
-            params.put(LoggerConst.REQUEST_KEY_BODY_PARAM, requestBody);
-        }
-        return params;
     }
 
     protected String exceptionMsg(Throwable exception) {

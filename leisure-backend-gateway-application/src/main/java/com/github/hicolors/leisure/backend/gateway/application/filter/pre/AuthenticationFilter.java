@@ -4,6 +4,7 @@ import com.github.hicolors.leisure.backend.gateway.application.exception.Backend
 import com.github.hicolors.leisure.backend.gateway.application.exception.EnumBackendGatewayCodeMessage;
 import com.github.hicolors.leisure.backend.gateway.application.filter.FilterOrder;
 import com.github.hicolors.leisure.backend.gateway.sdk.consts.AuthenticationConsts;
+import com.github.hicolors.leisure.common.framework.logger.ExtraParamUtils;
 import com.github.hicolors.leisure.member.authorization.token.TokenStore;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
@@ -86,6 +87,9 @@ public class AuthenticationFilter extends ZuulFilter {
             throw new BackendGatewayServerException(EnumBackendGatewayCodeMessage.USER_INFO_IS_BLANK);
         }
         try {
+            //追加 access log 额外信息
+            ExtraParamUtils.put(AuthenticationConsts.HEADER_USER_ID, String.valueOf(userId));
+
             //URLEncoder防止中文乱码
             reqCtx.addZuulRequestHeader(AuthenticationConsts.HEADER_USER_ID, String.valueOf(userId));
             reqCtx.addZuulRequestHeader(AuthenticationConsts.HEADER_USER_INFO, URLEncoder.encode(userInfo, "UTF-8"));
