@@ -1,8 +1,12 @@
 package com.github.hicolors.leisure.backend.gateway.application.filter.post;
 
 import com.netflix.zuul.context.RequestContext;
+import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.cloud.netflix.zuul.filters.ZuulProperties;
 import org.springframework.cloud.netflix.zuul.filters.post.SendResponseFilter;
 import org.springframework.stereotype.Component;
+
+import java.util.Objects;
 
 /**
  * ErrorSendResponseFilter
@@ -13,12 +17,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class ErrorSendResponseFilter extends SendResponseFilter {
 
+    public ErrorSendResponseFilter(ZuulProperties zuulProperties) {
+        super(zuulProperties);
+    }
+
     @Override
     public boolean shouldFilter() {
         RequestContext context = RequestContext.getCurrentContext();
-        return context.getThrowable() != null
-                && (!context.getZuulResponseHeaders().isEmpty()
-                || context.getResponseDataStream() != null
-                || context.getResponseBody() != null);
+        return Objects.nonNull(context.getThrowable())
+                && (ObjectUtils.anyNotNull(
+                context.getResponseDataStream(),
+                context.getZuulResponseHeaders(),
+                context.getResponseBody()));
     }
 }

@@ -21,5 +21,6 @@ spring:
 zuul:
   routes:
     leisure-member-api:
+      serviceId: leisure-member-api
       path: /leisure-member-api/**
       stripPrefix: false

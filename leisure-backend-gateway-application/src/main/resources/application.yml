@@ -5,19 +5,6 @@ server:
   servlet:
     context-path: /
 
-warning:
-  dingtalk: https://oapi.dingtalk.com/robot/send?access_token=099551a192492077a922a5d1aa7e1a060b0fd18890f021c0e4298013d4dcb5c2
-
-leisure-member:
-  ribbon:
-    listOfServers: http://127.0.0.1:10002
-
-spring:
-  redis:
-    host: 47.105.97.16
-    port: 16379
-    database: 0
-
 zuul:
   SendErrorFilter:
     error:
@@ -26,3 +13,8 @@ zuul:
 ribbon:
   eureka:
     enabled: false
+
+access:
+  logger:
+    exclude:
+      uris: /**/favicon.ico,/**/swagger**/**,/**/health/**,/**/webjars/**

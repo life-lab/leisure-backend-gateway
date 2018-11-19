@@ -5,7 +5,7 @@
 
     <!-- 全局统一 pattern -->
     <property name="LOG_PATTERN"
-              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %(${LOG_LEVEL_PATTERN:-%5p}) %logger{256} : %msg%n"/>
+              value="%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}} ${LOG_LEVEL_PATTERN:-%5p} ${PID:- } --- [%t] %-40.40logger{39}: %msg%n"/>
 
     <!-- 标准输出模式 console-->
     <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">

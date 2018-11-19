@@ -77,7 +77,7 @@ public class ErrorFilter extends ZuulFilter {
         Throwable e = ctx.getThrowable();
 
         if (Objects.nonNull(e.getCause()) && e.getCause() instanceof ExtensionException) {
-            handle(ctx, (ExtensionException) e.getCause());
+            handle(ctx, e.getCause());
         } else {
             if (Objects.nonNull(e.getCause())) {
                 handle(ctx, e.getCause());
