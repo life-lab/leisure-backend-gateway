@@ -1,4 +1,4 @@
-FROM java:8u111-jre-alpine
+FROM openjdk:8-jre-alpine
 
 ADD ./leisure-backend-gateway-application/target/*.jar /app/app.jar
 
