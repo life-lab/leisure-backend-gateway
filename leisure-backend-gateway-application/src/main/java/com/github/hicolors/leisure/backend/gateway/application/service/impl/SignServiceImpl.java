@@ -17,10 +17,10 @@ import com.github.hicolors.leisure.member.authorization.validator.exception.Memb
 import com.github.hicolors.leisure.member.model.persistence.Member;
 import com.github.hicolors.leisure.member.model.persistence.Platform;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Objects;
 
@@ -112,17 +112,17 @@ public class SignServiceImpl implements SignService {
         if (StringUtils.isBlank(userInfoJson)) {
             throw new AuthorizationException(EnumAuthorizationExceptionCodeMessage.USER_INFO_IS_BLANK);
         }
-        MemberAuthorization userInfo = JsonUtils.deserialize(userInfoJson,MemberAuthorization.class);
-        if (userInfo.getPlatformRoles().isEmpty()) {
+        MemberAuthorization userInfo = JsonUtils.deserialize(userInfoJson, MemberAuthorization.class);
+        if (CollectionUtils.isEmpty(userInfo.getPlatformRoles())) {
             throw new BackendGatewayServerException(EnumBackendGatewayCodeMessage.MEMBER_PLATFORM_NON_EXSIT);
         } else {
-            if (CollectionUtils.isNotEmpty(userInfo.getPlatformRoles().get(model.getPlatformId()))) {
+            if (Objects.nonNull(userInfo.getPlatformRoles().get(model.getPlatformId()))) {
                 Platform platform = userClient.queryPlatform(model.getPlatformId());
                 userInfo.setPlatformId(platform.getId());
                 userInfo.setPlatformName(platform.getName());
                 redisTokenStore.storeUserInfo(userInfo);
                 return new PrimaryPlatform(platform.getId(), platform.getName());
-            }else{
+            } else {
                 throw new BackendGatewayServerException(EnumBackendGatewayCodeMessage.MEMBER_NOT_BELONG_THE_PLATFORM);
             }
         }
@@ -162,5 +162,4 @@ public class SignServiceImpl implements SignService {
         memberValidator.validator(member);
         return redisTokenStore.storeAccessToken(userClient.queryMemberAuthorization(member.getId()));
     }
-
 }
