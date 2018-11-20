@@ -16,7 +16,9 @@ public interface FilterOrder {
     /**
      * 鉴权过滤器
      */
-    int AUTHENTICATION_FILTER_ORDER = 1;
+    int DENY_FILTER_ORDER = 1;
+
+    int AUTHENTICATION_FILTER_ORDER = 10;
 
     /** post **/
 

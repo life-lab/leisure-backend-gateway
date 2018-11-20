@@ -34,7 +34,7 @@ import static org.springframework.cloud.netflix.zuul.filters.support.FilterConst
 @Slf4j
 public class AuthenticationFilter extends ZuulFilter {
 
-    @Value("#{'${authentication.non-require.uris:/**/**swagger**/**,/**/v2/api-docs}'.split(',')}")
+    @Value("#{'${uris.non-authentication:/**/**swagger**/**,/**/v2/api-docs}'.split(',')}")
     private List<String> nonRequireAuthentication;
 
     private PathMatcher pathMatcher = new AntPathMatcher();

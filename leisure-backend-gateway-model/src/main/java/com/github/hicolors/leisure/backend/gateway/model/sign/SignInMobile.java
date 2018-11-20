@@ -1,5 +1,6 @@
 package com.github.hicolors.leisure.backend.gateway.model.sign;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
@@ -13,6 +14,7 @@ import org.hibernate.validator.constraints.NotBlank;
  * @date 2018/11/5
  */
 @Data
+@ApiModel("手机号登录 model")
 public class SignInMobile {
     @ApiModelProperty(notes = "手机号", required = true)
     @NotBlank(message = "手机号不允许为空")

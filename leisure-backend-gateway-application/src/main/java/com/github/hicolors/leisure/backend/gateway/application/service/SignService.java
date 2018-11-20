@@ -1,9 +1,6 @@
 package com.github.hicolors.leisure.backend.gateway.application.service;
 
-import com.github.hicolors.leisure.backend.gateway.model.sign.SignInEmail;
-import com.github.hicolors.leisure.backend.gateway.model.sign.SignInMobile;
-import com.github.hicolors.leisure.backend.gateway.model.sign.SignInPassword;
-import com.github.hicolors.leisure.backend.gateway.model.sign.SignInRefreshToken;
+import com.github.hicolors.leisure.backend.gateway.model.sign.*;
 import com.github.hicolors.leisure.member.authorization.token.impl.AuthToken;
 
 /**
@@ -21,6 +18,8 @@ public interface SignService {
     AuthToken email(SignInEmail model);
 
     AuthToken refreshToken(SignInRefreshToken model);
+
+    PrimaryPlatform switchPrimaryPlatform(SwitchPlatformModel model,String accessToken);
 
     void signOut(String accessToken);
 

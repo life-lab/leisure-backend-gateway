@@ -10,10 +10,9 @@ spring:
     publisher-confirms: true
     publisher-returns: true
 
-hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 60000
 ribbon:
-  ConnectTimeout: 3000
-  ReadTimeout: 60000
+  connectTimeout: 3000
+  readTimeout: 60000
   eureka:
     enabled: false
 
@@ -21,16 +20,20 @@ zuul:
   SendErrorFilter:
     error:
       disable: true
-      
   routes:
-    authentication-api:
-      path: /authentication/**
-      stripPrefix: true
+    api:
+      path: /**
+      stripPrefix: false
       url: forward:/
+    authentication:
+      path: /authorization/sign-in/**
+      stripPrefix: true
+      url: forward:/sign-in
 
-authentication:
-  non-require:
-    uris: /authentication/**,/**/**swagger**/**,/**/v2/api-docs
+
+uris:
+  non-authentication: /authorization/sign-in/**,/**/**swagger**/**,/**/v2/api-docs
+  deny: /sign-in/**
 
 access:
   logger:

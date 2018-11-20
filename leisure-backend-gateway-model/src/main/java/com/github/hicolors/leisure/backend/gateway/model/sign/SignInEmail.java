@@ -1,5 +1,6 @@
 package com.github.hicolors.leisure.backend.gateway.model.sign;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.hibernate.validator.constraints.Email;
@@ -14,6 +15,7 @@ import javax.validation.constraints.NotBlank;
  * @date 2018/11/5
  */
 @Data
+@ApiModel("邮箱登录 model")
 public class SignInEmail {
 
     @ApiModelProperty(notes = "邮箱", required = true)

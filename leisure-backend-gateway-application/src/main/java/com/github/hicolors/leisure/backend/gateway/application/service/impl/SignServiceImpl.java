@@ -3,21 +3,26 @@ package com.github.hicolors.leisure.backend.gateway.application.service.impl;
 import com.github.hicolors.leisure.backend.gateway.application.exception.BackendGatewayServerException;
 import com.github.hicolors.leisure.backend.gateway.application.exception.EnumBackendGatewayCodeMessage;
 import com.github.hicolors.leisure.backend.gateway.application.service.SignService;
-import com.github.hicolors.leisure.backend.gateway.model.sign.SignInEmail;
-import com.github.hicolors.leisure.backend.gateway.model.sign.SignInMobile;
-import com.github.hicolors.leisure.backend.gateway.model.sign.SignInPassword;
-import com.github.hicolors.leisure.backend.gateway.model.sign.SignInRefreshToken;
+import com.github.hicolors.leisure.backend.gateway.model.sign.*;
+import com.github.hicolors.leisure.backend.gateway.sdk.exception.AuthorizationException;
+import com.github.hicolors.leisure.backend.gateway.sdk.exception.EnumAuthorizationExceptionCodeMessage;
 import com.github.hicolors.leisure.common.exception.ExtensionException;
+import com.github.hicolors.leisure.common.utils.JsonUtils;
 import com.github.hicolors.leisure.member.authorization.feign.SignInClient;
 import com.github.hicolors.leisure.member.authorization.token.TokenStore;
 import com.github.hicolors.leisure.member.authorization.token.impl.AuthToken;
+import com.github.hicolors.leisure.member.authorization.token.impl.MemberAuthorization;
 import com.github.hicolors.leisure.member.authorization.validator.MemberValidator;
 import com.github.hicolors.leisure.member.authorization.validator.exception.MemberAuthorizationException;
 import com.github.hicolors.leisure.member.model.persistence.Member;
+import com.github.hicolors.leisure.member.model.persistence.Platform;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 /**
  * SignServiceImpl
@@ -96,9 +101,31 @@ public class SignServiceImpl implements SignService {
         return storeAccessToken(member);
     }
 
-    private AuthToken storeAccessToken(Member member) {
-        memberValidator.validator(member);
-        return redisTokenStore.storeAccessToken(userClient.queryMemberAuthorization(member.getId()));
+
+    @Override
+    public PrimaryPlatform switchPrimaryPlatform(SwitchPlatformModel model, String accessToken) {
+        Long userId = redisTokenStore.findUserIdByAccessToken(accessToken);
+        if (userId == 0L) {
+            throw new AuthorizationException(EnumAuthorizationExceptionCodeMessage.ACCESS_TOKEN_IS_INVALID);
+        }
+        String userInfoJson = redisTokenStore.findUserInfoByUserId(userId);
+        if (StringUtils.isBlank(userInfoJson)) {
+            throw new AuthorizationException(EnumAuthorizationExceptionCodeMessage.USER_INFO_IS_BLANK);
+        }
+        MemberAuthorization userInfo = JsonUtils.deserialize(userInfoJson,MemberAuthorization.class);
+        if (userInfo.getPlatformRoles().isEmpty()) {
+            throw new BackendGatewayServerException(EnumBackendGatewayCodeMessage.MEMBER_PLATFORM_NON_EXSIT);
+        } else {
+            if (CollectionUtils.isNotEmpty(userInfo.getPlatformRoles().get(model.getPlatformId()))) {
+                Platform platform = userClient.queryPlatform(model.getPlatformId());
+                userInfo.setPlatformId(platform.getId());
+                userInfo.setPlatformName(platform.getName());
+                redisTokenStore.storeUserInfo(userInfo);
+                return new PrimaryPlatform(platform.getId(), platform.getName());
+            }else{
+                throw new BackendGatewayServerException(EnumBackendGatewayCodeMessage.MEMBER_NOT_BELONG_THE_PLATFORM);
+            }
+        }
     }
 
     @Override
@@ -125,4 +152,15 @@ public class SignServiceImpl implements SignService {
             redisTokenStore.clearToken(id);
         }
     }
+
+
+    private AuthToken storeAccessToken(Member member) {
+        if (Objects.nonNull(member.getMemberDetail())
+                && Objects.isNull(member.getMemberDetail().getPlatform())) {
+            throw new BackendGatewayServerException(EnumBackendGatewayCodeMessage.MEMBER_PLATFORM_NON_EXSIT);
+        }
+        memberValidator.validator(member);
+        return redisTokenStore.storeAccessToken(userClient.queryMemberAuthorization(member.getId()));
+    }
+
 }
