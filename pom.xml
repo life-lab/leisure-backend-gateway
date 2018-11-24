@@ -4,21 +4,20 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.github.life.lab.leisure</groupId>
     <artifactId>leisure-backend-gateway</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <parent>
-        <groupId>com.github.life.lab</groupId>
+        <groupId>com.github.life-lab</groupId>
         <artifactId>leisure</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>0.0.2-RELEASE</version>
     </parent>
 
     <modules>
+        <module>leisure-backend-gateway-model</module>
         <module>leisure-backend-gateway-sdk</module>
         <module>leisure-backend-gateway-application</module>
-        <module>leisure-backend-gateway-model</module>
     </modules>
 
     <properties>
@@ -31,9 +30,8 @@
 
         <dependencies>
 
-
             <dependency>
-                <groupId>com.github.life.lab.leisure</groupId>
+                <groupId>com.github.life-lab</groupId>
                 <artifactId>leisure-member-authorization</artifactId>
                 <version>${leisure-member.version}</version>
             </dependency>

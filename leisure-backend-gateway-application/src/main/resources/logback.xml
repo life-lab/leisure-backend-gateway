@@ -130,7 +130,6 @@
 
     <logger name="springfox.documentation" level="OFF"/>
 
-
     <springProfile name="dev">
         <root>
             <level value="INFO"/>
