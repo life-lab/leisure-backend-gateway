@@ -1,6 +1,6 @@
 FROM openjdk:8-jre-alpine
 
-ADD ./leisure-backend-gateway-application/target/*.jar /app/app.jar
+ADD ./leisure-backend-gateway-application/target/leisure-backend-gateway.jar /app/app.jar
 
 # 设置编码格式
 ENV LANG="zh_CN.UTF-8"
