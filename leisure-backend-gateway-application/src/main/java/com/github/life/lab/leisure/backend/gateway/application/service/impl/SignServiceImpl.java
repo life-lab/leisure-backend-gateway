@@ -130,9 +130,7 @@ public class SignServiceImpl implements SignService {
 
     @Override
     public void signOut(String accessToken) {
-        Long userId = redisTokenStore.findUserIdByAccessToken(accessToken);
-        log.info("sign out user :{}", userId);
-        redisTokenStore.clearToken(userId);
+        redisTokenStore.clearOneToken(accessToken);
     }
 
     @Override
@@ -149,7 +147,7 @@ public class SignServiceImpl implements SignService {
             redisTokenStore.storeUserInfo(userClient.queryMemberAuthorization(member.getId()));
         } catch (MemberAuthorizationException e) {
             log.info("member [{}] verification failed,clear all tokens now!", id);
-            redisTokenStore.clearToken(id);
+            redisTokenStore.clearAllToken(id);
         }
     }
 
