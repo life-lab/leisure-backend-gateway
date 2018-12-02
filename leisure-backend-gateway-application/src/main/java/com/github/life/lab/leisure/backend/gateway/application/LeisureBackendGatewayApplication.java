@@ -1,6 +1,5 @@
 package com.github.life.lab.leisure.backend.gateway.application;
 
-import com.github.life.lab.leisure.backend.gateway.application.filter.post.ErrorResponseFilter;
 import com.github.life.lab.leisure.member.authorization.token.TokenStore;
 import com.github.life.lab.leisure.member.authorization.token.impl.RedisTokenStore;
 import com.github.life.lab.leisure.member.authorization.validator.MemberValidator;
@@ -36,10 +35,4 @@ public class LeisureBackendGatewayApplication {
     public MemberValidator memberValidator() {
         return new MemberValidator();
     }
-
-    @Bean
-    public ErrorResponseFilter errorResponseFilter() {
-        return new ErrorResponseFilter();
-    }
-
 }

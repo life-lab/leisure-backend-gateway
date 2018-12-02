@@ -20,8 +20,12 @@ public interface FilterOrder {
 
     int AUTHENTICATION_FILTER_ORDER = 10;
 
-    /** post **/
+    /**
+     * post
+     **/
+    int ERROR_RESPONSE_FILTER_ORDER = SEND_ERROR_FILTER_ORDER + 1;
 
+    int EXCEPTION_RESPONSE_BODY_ENHANCE_FILTER_ORDER = ERROR_RESPONSE_FILTER_ORDER + 100;
 
     /** router **/
 
