@@ -1,13 +1,9 @@
 package com.github.life.lab.leisure.backend.gateway.application;
 
-import com.github.life.lab.leisure.member.authorization.token.TokenStore;
-import com.github.life.lab.leisure.member.authorization.token.impl.RedisTokenStore;
-import com.github.life.lab.leisure.member.authorization.validator.MemberValidator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 import org.springframework.cloud.openfeign.EnableFeignClients;
-import org.springframework.context.annotation.Bean;
 
 /**
  * LeisureBackendGatewayApplication
@@ -26,13 +22,4 @@ public class LeisureBackendGatewayApplication {
         SpringApplication.run(LeisureBackendGatewayApplication.class, args);
     }
 
-    @Bean
-    public TokenStore redisTokenStore() {
-        return new RedisTokenStore();
-    }
-
-    @Bean
-    public MemberValidator memberValidator() {
-        return new MemberValidator();
-    }
 }

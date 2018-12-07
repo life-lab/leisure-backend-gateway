@@ -76,7 +76,6 @@ public class AuthenticationFilter extends ZuulFilter {
         if (StringUtils.isBlank(accessToken)) {
             throw new AuthorizationException(EnumAuthorizationExceptionCodeMessage.ACCESS_TOKEN_IS_NULL);
         }
-
         Long userId = redisTokenStore.findUserIdByAccessToken(accessToken);
         if (userId == 0L) {
             throw new AuthorizationException(EnumAuthorizationExceptionCodeMessage.ACCESS_TOKEN_IS_INVALID);
