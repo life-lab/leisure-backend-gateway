@@ -18,7 +18,6 @@ import java.lang.reflect.Method;
 @Aspect
 public class AuthorityExpressionProcessor {
 
-
     @Pointcut("@annotation(com.github.life.lab.leisure.backend.gateway.sdk.authentication.annotation.AuthorityExpression)")
     public void preAuthority() {
     }
@@ -30,9 +29,6 @@ public class AuthorityExpressionProcessor {
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         Method method = methodSignature.getMethod();
         AuthorityExpression ma = method.getAnnotation(AuthorityExpression.class);
-        System.out.println(method);
-        System.out.println(ma);
-        System.out.println(args.length);
         return joinPoint.proceed();
     }
 
